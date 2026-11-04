@@ -40,3 +40,6 @@ app-example
 # nix
 /result
 /.direnv
+
+# local screenshots
+/PICTURES_DONT_COMMIT/

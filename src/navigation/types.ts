@@ -1,18 +1,34 @@
-import { NavigatorScreenParams } from "@react-navigation/native";
+import { NavigatorScreenParams } from '@react-navigation/native';
 
-// Screens inside the bottom tabs.
+import { AppliedProject } from '@/src/features/project/domain/models';
+
 export type TabParamList = {
   Home: undefined;
-  Notes: undefined;
+  Explore: undefined;
+  Create: undefined;
+  Projects: undefined;
+  Profile: undefined;
 };
 
-// Screens in the root stack. Add params here, e.g. EditNote: { id: string }.
 export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
   Tabs: NavigatorScreenParams<TabParamList>;
-  AddNote: undefined;
+  ProjectDetail: { projectId: string };
+  RequestSent: { projectId: string };
+  PublicProfile: {
+    userId: string;
+    fallbackName?: string;
+    fallbackCareer?: string;
+    fallbackAvatarUrl?: string;
+  };
+  TeamManagement: { projectId: string };
+  EditProject: { projectId: string };
+  AppliedProjectDetail: { project: AppliedProject };
+  EditProfile: undefined;
+  Workspace: { projectId: string; projectTitle: string; isOwner: boolean };
 };
 
-// Makes useNavigation() / navigation.navigate() type-checked across the app.
 declare global {
   namespace ReactNavigation {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type

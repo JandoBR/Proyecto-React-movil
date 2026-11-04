@@ -6,5 +6,9 @@ module.exports = defineConfig([
   expoConfig,
   {
     ignores: ['dist/*'],
+    rules: {
+      // Fetch-on-mount and resetting modal forms are deliberate in this app.
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ]);

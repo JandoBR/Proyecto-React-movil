@@ -4,8 +4,13 @@ import React from "react";
 import App from "../App";
 
 describe("App", () => {
-  it("renders the home screen", async () => {
+  it("shows the Nexus splash and then the login screen", async () => {
     render(<App />);
-    expect(await screen.findByText("Home screen...")).toBeTruthy();
+    expect(await screen.findByText("NEXUS")).toBeTruthy();
+
+    expect(
+      await screen.findByText("¡Hola de nuevo!", {}, { timeout: 4000 }),
+    ).toBeTruthy();
+    expect(screen.getByText("Iniciar Sesión")).toBeTruthy();
   });
 });

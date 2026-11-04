@@ -1,86 +1,102 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import {
-  DarkTheme,
-  DefaultTheme,
-  NavigationContainer,
-} from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { DIProvider } from "./src/core/di/DIProvider";
-import { NotesProvider } from "./src/features/notes/presentation/context/NotesContext";
+import { colors } from "./src/core/theme/colors";
+import { paperTheme } from "./src/core/theme/theme";
+import { AuthProvider, useAuth } from "./src/features/auth/AuthContext";
+import SplashScreenView from "./src/features/auth/screens/SplashScreen";
 import RootNavigator from "./src/navigation/RootNavigator";
-import { darkTheme, lightTheme } from "./src/theme/theme";
+import { DialogProvider } from "./src/ui/dialogs";
+import { FeedbackProvider } from "./src/ui/feedback";
 
-// Expo Go doesn't support customizing the splash screen; only apply options in development/production builds.
 const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
-// Keep the native splash screen visible until the app has finished loading.
 SplashScreen.preventAutoHideAsync();
 if (!isExpoGo) {
   SplashScreen.setOptions({ duration: 400, fade: true });
 }
 
+const navigationTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: colors.cream,
+    card: colors.white,
+    text: colors.text,
+    border: colors.border,
+    primary: colors.primary,
+    notification: colors.danger,
+  },
+};
+
+function AppContent() {
+  const { status } = useAuth();
+  const [brandingDone, setBrandingDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setBrandingDone(true), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (status === "restoring" || !brandingDone) {
+    return <SplashScreenView />;
+  }
+
+  return (
+    <NavigationContainer theme={navigationTheme}>
+      <RootNavigator />
+    </NavigationContainer>
+  );
+}
+
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const scheme = useColorScheme();
-  const theme = lightTheme;
 
   useEffect(() => {
     async function prepare() {
       try {
-        // Load anything the first screen needs here (fonts, saved preferences, session...).
-        // Paper draws its icons with MaterialCommunityIcons, so preload that font.
         await Font.loadAsync(MaterialCommunityIcons.font);
-      } catch (e) {
-        console.warn(e);
+      } catch (error) {
+        console.warn(error);
       } finally {
         setAppIsReady(true);
       }
     }
-
     prepare();
   }, []);
 
   useEffect(() => {
-    if (appIsReady) {
-      SplashScreen.hide();
-    }
+    if (appIsReady) SplashScreen.hide();
   }, [appIsReady]);
 
-  if (!appIsReady) {
-    return null;
-  }
-
-  if (__DEV__) console.log("Current theme:", scheme);
-
-  const navigationTheme = {
-    ...(scheme === "dark" ? DarkTheme : DefaultTheme),
-    colors: {
-      ...(scheme === "dark" ? DarkTheme.colors : DefaultTheme.colors),
-      background: theme.colors.background,
-      card: theme.colors.surface,
-      text: theme.colors.onSurface,
-      border: theme.colors.outline,
-      primary: theme.colors.primary,
-      notification: theme.colors.error,
-    },
-  };
+  if (!appIsReady) return null;
 
   return (
-    <DIProvider>
-      <NotesProvider>
-        <PaperProvider theme={theme}>
-          <NavigationContainer theme={navigationTheme}>
-            <RootNavigator />
-          </NavigationContainer>
-        </PaperProvider>
-      </NotesProvider>
-    </DIProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <DIProvider>
+          <PaperProvider theme={paperTheme}>
+            <StatusBar style="dark" />
+            <FeedbackProvider>
+              <DialogProvider>
+                <AuthProvider>
+                  <AppContent />
+                </AuthProvider>
+              </DialogProvider>
+            </FeedbackProvider>
+          </PaperProvider>
+        </DIProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

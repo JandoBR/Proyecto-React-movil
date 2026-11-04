@@ -1,6 +1,10 @@
-// One token per dependency registered in the container (see appContainer.ts).
 export const TOKENS = {
-  LocalPreferences: Symbol("LocalPreferences"),
-  NoteLocalDS: Symbol("NoteLocalDS"),
-  NoteRepo: Symbol("NoteRepo"),
+  Roble: Symbol("Roble"),
+  AuthRepo: Symbol("AuthRepo"),
+  HomeRepo: Symbol("HomeRepo"),
+  ExploreRepo: Symbol("ExploreRepo"),
+  ProjectRepo: Symbol("ProjectRepo"),
+  CreateRepo: Symbol("CreateRepo"),
+  ProfileRepo: Symbol("ProfileRepo"),
+  WorkspaceRepo: Symbol("WorkspaceRepo"),
 } as const;
