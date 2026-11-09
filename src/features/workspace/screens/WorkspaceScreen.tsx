@@ -23,7 +23,7 @@ import {
   shortDate,
   shortWithTime,
 } from '@/src/core/date-labels';
-import { colors, gradient } from '@/src/core/theme/colors';
+import { cardShadow, colors, gradient } from '@/src/core/theme/colors';
 import { WorkspaceRepository } from '@/src/features/workspace/data/WorkspaceRepository';
 import {
   CalendarEntry,
@@ -224,6 +224,8 @@ export default function WorkspaceScreen({ navigation, route }: Props) {
   const canDeleteEvent = (event: ProjectEvent) =>
     isOwner || (!!event.createdById && event.createdById === currentUserId);
 
+  const openChat = () => navigation.navigate('ProjectChat', { projectId, projectTitle });
+
   const markersFor = (day: Date): DayMarkers => {
     const entries = entriesFor(day);
     return {
@@ -260,6 +262,9 @@ export default function WorkspaceScreen({ navigation, route }: Props) {
             </Text>
           </View>
           {members.length ? <TeamStack members={members} /> : null}
+          <View style={{ marginLeft: 10 }}>
+            <CircleIconButton icon="chat-outline" onPress={openChat} />
+          </View>
         </View>
 
         <View style={{ marginTop: 20 }}>
@@ -282,6 +287,23 @@ export default function WorkspaceScreen({ navigation, route }: Props) {
                 overdueCount={overdue.length}
                 nextDeadline={nextDeadline}
               />
+
+              <Pressable onPress={openChat} style={styles.chatCard} testID="open-chat">
+                <View style={styles.chatIcon}>
+                  <MaterialCommunityIcons
+                    name="chat-processing-outline"
+                    size={22}
+                    color={colors.primary}
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.chatTitle}>Chat del equipo</Text>
+                  <Text style={styles.chatSubtitle}>
+                    Habla con los integrantes del proyecto
+                  </Text>
+                </View>
+                <MaterialCommunityIcons name="chevron-right" size={22} color={colors.subtle} />
+              </Pressable>
 
               <View style={{ marginTop: 22 }}>
                 <SegmentedTabs
@@ -493,7 +515,7 @@ export default function WorkspaceScreen({ navigation, route }: Props) {
         visible={form === 'task'}
         members={members}
         onClose={() => setForm(null)}
-        onSubmit={async ({ title, description, assignee, dueDate }) => {
+        onSubmit={async ({ title, description, assignees, dueDate }) => {
           if (!title.trim()) return false;
           try {
             const created = await repository.createTask({
@@ -501,8 +523,8 @@ export default function WorkspaceScreen({ navigation, route }: Props) {
               projectId,
               title: title.trim(),
               description: description.trim(),
-              assigneeId: assignee?.id ?? '',
-              assigneeName: assignee?.name ?? '',
+              assigneeIds: assignees.map((member) => member.id),
+              assigneeNames: assignees.map((member) => member.name),
               dueDate: dueDate ? dateOnly(dueDate) : null,
               isDone: false,
               completedAt: null,
@@ -724,7 +746,7 @@ function TaskTile({
             {task.description}
           </Text>
         ) : null}
-        {task.assigneeId || task.assigneeName || task.dueDate ? (
+        {task.assigneeNames.length || task.dueDate ? (
           <View style={styles.taskMetaRow}>
             {task.dueDate ? (
               <MetaChip
@@ -738,14 +760,15 @@ function TaskTile({
                 background={dueBackground}
               />
             ) : null}
-            {task.assigneeName ? (
+            {task.assigneeNames.map((assigneeName, index) => (
               <MetaChip
+                key={`${task.assigneeIds[index] ?? ''}-${index}`}
                 icon="account-outline"
-                label={task.assigneeName}
+                label={assigneeName}
                 foreground="#6B6B6B"
                 background={colors.chipBg}
               />
-            ) : null}
+            ))}
           </View>
         ) : null}
       </View>
@@ -820,8 +843,8 @@ function CalendarEntryTile({
   const subtitle = isTask
     ? done
       ? 'Tarea completada'
-      : task.assigneeName
-        ? `Deadline · ${task.assigneeName}`
+      : task.assigneeNames.length
+        ? `Deadline · ${task.assigneeNames.join(', ')}`
         : 'Deadline de tarea'
     : event?.description
       ? `${EVENT_KIND_LABEL[event.kind]} · ${event.description}`
@@ -1040,6 +1063,26 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     color: colors.muted,
   },
+  chatCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 14,
+    padding: 14,
+    borderRadius: 18,
+    backgroundColor: colors.white,
+    ...cardShadow,
+  },
+  chatIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,112,67,0.12)',
+  },
+  chatTitle: { fontSize: 15, fontWeight: '700', color: colors.textSoft },
+  chatSubtitle: { marginTop: 2, fontSize: 12.5, color: colors.muted },
   taskMetaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
   metaChip: {
     flexDirection: 'row',

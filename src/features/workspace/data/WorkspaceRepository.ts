@@ -30,12 +30,35 @@ export class WorkspaceRepository {
   }
 
   async createTask(task: ProjectTask): Promise<ProjectTask> {
-    const row = await this.roble.client.create('project_task', taskToJson(task));
+    const row = await this.writeTask(
+      (data) => this.roble.client.create('project_task', data),
+      task,
+    );
     return taskFromJson(row);
   }
 
   async updateTask(task: ProjectTask): Promise<void> {
-    await this.roble.client.update('project_task', task.id, taskToJson(task));
+    await this.writeTask(
+      (data) => this.roble.client.update('project_task', task.id, data),
+      task,
+    );
+  }
+
+  /** Retries without `assignee_ids` while that column does not exist yet. */
+  private async writeTask(
+    write: (data: Record<string, unknown>) => Promise<Record<string, any>>,
+    task: ProjectTask,
+  ): Promise<Record<string, any>> {
+    const { assignee_ids, ...data } = taskToJson(task);
+    if (task.assigneeIds.length < 2) return write(data);
+    try {
+      return await write({ ...data, assignee_ids });
+    } catch {
+      return write({
+        ...data,
+        assignee_name: task.assigneeNames[0] ?? '',
+      });
+    }
   }
 
   async deleteTask(taskId: string): Promise<void> {

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { PaperProvider } from "react-native-paper";
 
@@ -29,5 +29,37 @@ describe("TaskFormModal", () => {
     expect(screen.getByText("Nueva tarea")).toBeTruthy();
     fireEvent.press(screen.getByTestId("workspace-form-close"));
     expect(onClose).toHaveBeenCalled();
+  });
+});
+
+describe("TaskFormModal assignees", () => {
+  it("submits every selected member", async () => {
+    const onSubmit = jest.fn(async () => true);
+    render(
+      <PaperProvider>
+        <TaskFormModal
+          visible
+          members={[
+            { id: "u1", name: "Ana", avatarUrl: "", role: "", isOwner: true },
+            { id: "u2", name: "Luis", avatarUrl: "", role: "", isOwner: false },
+          ]}
+          onClose={jest.fn()}
+          onSubmit={onSubmit}
+        />
+      </PaperProvider>,
+    );
+    fireEvent.changeText(screen.getByPlaceholderText("Ej. Diseñar el prototipo en Figma"), "Prototipo");
+    fireEvent.press(screen.getByTestId("assignee-u1"));
+    fireEvent.press(screen.getByTestId("assignee-u2"));
+    fireEvent.press(screen.getByText("Crear tarea"));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        assignees: [
+          expect.objectContaining({ id: "u1" }),
+          expect.objectContaining({ id: "u2" }),
+        ],
+      }),
+    );
   });
 });

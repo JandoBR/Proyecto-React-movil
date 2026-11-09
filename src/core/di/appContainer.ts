@@ -4,6 +4,7 @@ import { ExploreRepository } from "@/src/features/explore/data/ExploreRepository
 import { HomeRepository } from "@/src/features/home/data/HomeRepository";
 import { ProfileRepository } from "@/src/features/profile/data/ProfileRepository";
 import { ProjectRepository } from "@/src/features/project/data/ProjectRepository";
+import { ChatRepository } from "@/src/features/workspace/data/ChatRepository";
 import { WorkspaceRepository } from "@/src/features/workspace/data/WorkspaceRepository";
 import { robleService } from "@/src/core/roble/service";
 import { Container } from "./container";
@@ -19,7 +20,8 @@ export function createAppContainer(): Container {
     .register(TOKENS.ProjectRepo, new ProjectRepository(robleService))
     .register(TOKENS.CreateRepo, new CreateRepository(robleService))
     .register(TOKENS.ProfileRepo, new ProfileRepository(robleService))
-    .register(TOKENS.WorkspaceRepo, new WorkspaceRepository(robleService));
+    .register(TOKENS.WorkspaceRepo, new WorkspaceRepository(robleService))
+    .register(TOKENS.ChatRepo, new ChatRepository(robleService));
 
   return c;
 }

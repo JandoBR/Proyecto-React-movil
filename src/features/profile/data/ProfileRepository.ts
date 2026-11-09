@@ -1,5 +1,6 @@
 import { DEFAULT_AVATAR } from '@/src/core/roble/constants';
 import { RobleService } from '@/src/core/roble/service';
+import { AccountType, accountTypeFrom } from '@/src/features/auth/domain/models';
 import { CollaboratorProfile } from '@/src/features/home/domain/models';
 
 export class ProfileRepository {
@@ -11,6 +12,7 @@ export class ProfileRepository {
       name: String(cached?.name ?? 'Colaborador'),
       avatarUrl: cached?.avatar_url ?? cached?.avatarUrl,
       career: cached?.career,
+      accountType: accountTypeFrom(cached?.account_type ?? cached?.extra?.account_type),
     });
   }
 
@@ -20,11 +22,17 @@ export class ProfileRepository {
 
   private async readProfile(
     userId: string,
-    defaults: { name?: string; avatarUrl?: unknown; career?: unknown } = {},
+    defaults: {
+      name?: string;
+      avatarUrl?: unknown;
+      career?: unknown;
+      accountType?: AccountType | null;
+    } = {},
   ): Promise<CollaboratorProfile> {
     let name = defaults.name ?? 'Colaborador';
     let avatarUrl = String(defaults.avatarUrl ?? DEFAULT_AVATAR);
     let career = String(defaults.career ?? 'Estudiante');
+    let accountType = defaults.accountType ?? null;
     let skills: string[] = [];
     let interests: string[] = [];
 
@@ -35,6 +43,7 @@ export class ProfileRepository {
           name = String(profile.name ?? name);
           avatarUrl = String(profile.avatar_url ?? profile.avatarUrl ?? avatarUrl);
           career = String(profile.career ?? career);
+          accountType = accountTypeFrom(profile.account_type) ?? accountType;
         }
 
         const skillRows = await this.roble.client.read('collaborator_skill', {
@@ -57,38 +66,57 @@ export class ProfileRepository {
       // Keep defaults when the profile cannot be read.
     }
 
-    return { name, avatarUrl, career, skills, interests };
+    return { name, avatarUrl, career, accountType, skills, interests };
   }
 
+  /**
+   * Devuelve `false` si el rol no se pudo guardar porque la tabla
+   * `collaborator` aún no tiene la columna `account_type`; el resto del perfil
+   * se guarda igual.
+   */
   async updateProfile({
     name,
     career,
     avatarUrl,
+    accountType,
   }: {
     name: string;
     career: string;
     avatarUrl: string;
-  }): Promise<void> {
+    accountType: AccountType | null;
+  }): Promise<boolean> {
     const userId = this.roble.currentUserId;
-    if (!userId) return;
+    if (!userId) return false;
 
     const existing = await this.roble.findCollaborator(userId);
-    if (existing) {
-      const profileId = String(existing._id ?? existing.id);
-      await this.roble.client.update('collaborator', profileId, {
-        name,
-        career,
-        avatar_url: avatarUrl,
-      });
+    const data = { name, career, avatar_url: avatarUrl };
+    const write = (record: Record<string, unknown>) =>
+      existing
+        ? this.roble.client.update(
+            'collaborator',
+            String(existing._id ?? existing.id),
+            record,
+          )
+        : this.roble.client.create('collaborator', { id: userId, ...record });
+
+    let accountTypeSaved = true;
+    if (accountType) {
+      try {
+        await write({ ...data, account_type: accountType });
+      } catch {
+        // The table may not have the account_type column yet.
+        accountTypeSaved = false;
+        await write(data);
+      }
     } else {
-      await this.roble.client.create('collaborator', {
-        id: userId,
-        name,
-        career,
-        avatar_url: avatarUrl,
-      });
+      await write(data);
     }
-    this.roble.updateCachedUser({ name, avatar_url: avatarUrl, career });
+
+    this.roble.updateCachedUser({
+      ...data,
+      ...(accountType ? { account_type: accountType } : {}),
+    });
+    return accountTypeSaved;
   }
 
   async addSkill(skill: string): Promise<void> {

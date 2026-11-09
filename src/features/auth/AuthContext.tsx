@@ -10,7 +10,7 @@ import React, {
 import { useDI } from '@/src/core/di/DIProvider';
 import { TOKENS } from '@/src/core/di/tokens';
 import { AuthRepository } from './data/AuthRepository';
-import { UserSession } from './domain/models';
+import { AccountType, UserSession } from './domain/models';
 
 type AuthStatus = 'restoring' | 'signedOut' | 'signedIn';
 
@@ -18,7 +18,12 @@ interface AuthValue {
   status: AuthStatus;
   user: UserSession | null;
   login: (email: string, password: string) => Promise<UserSession>;
-  register: (email: string, password: string, name: string) => Promise<UserSession>;
+  register: (
+    email: string,
+    password: string,
+    name: string,
+    accountType: AccountType,
+  ) => Promise<UserSession>;
   logout: () => Promise<void>;
 }
 
@@ -60,8 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const register = useCallback(
-    async (email: string, password: string, name: string) => {
-      const session = await repository.register(email, password, name);
+    async (email: string, password: string, name: string, accountType: AccountType) => {
+      const session = await repository.register(email, password, name, accountType);
       setUser(session);
       setStatus('signedIn');
       return session;

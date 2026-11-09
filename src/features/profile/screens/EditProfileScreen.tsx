@@ -17,6 +17,9 @@ import { TextInput } from 'react-native-paper';
 import { useDI } from '@/src/core/di/DIProvider';
 import { TOKENS } from '@/src/core/di/tokens';
 import { colors, cardShadow } from '@/src/core/theme/colors';
+import { AccountTypePicker } from '@/src/features/auth/AccountTypePicker';
+import { ACCOUNT_TYPE_LABEL, AccountType } from '@/src/features/auth/domain/models';
+import { AccountTypeBadge } from '@/src/features/profile/AccountTypeBadge';
 import { ProfileRepository } from '@/src/features/profile/data/ProfileRepository';
 import { RootStackParamList } from '@/src/navigation/types';
 import {
@@ -40,6 +43,7 @@ export default function EditProfileScreen({ navigation }: Props) {
 
   const [name, setName] = useState('');
   const [career, setCareer] = useState('');
+  const [accountType, setAccountType] = useState<AccountType | null>(null);
   const [avatarUrl, setAvatarUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -52,6 +56,7 @@ export default function EditProfileScreen({ navigation }: Props) {
       .then((profile) => {
         setName(profile.name);
         setCareer(profile.career);
+        setAccountType(profile.accountType);
         setAvatarUrl(profile.avatarUrl);
       })
       .catch(() => {})
@@ -67,12 +72,20 @@ export default function EditProfileScreen({ navigation }: Props) {
 
     setSaving(true);
     try {
-      await repository.updateProfile({
+      const accountTypeSaved = await repository.updateProfile({
         name: name.trim(),
         career: career.trim(),
         avatarUrl: avatarUrl.trim(),
+        accountType,
       });
-      showSuccess('Perfil actualizado', 'Tus cambios se guardaron con éxito');
+      if (accountTypeSaved) {
+        showSuccess('Perfil actualizado', 'Tus cambios se guardaron con éxito');
+      } else {
+        showError(
+          'Rol no guardado',
+          'Se guardó el resto del perfil, pero la base de datos aún no acepta el rol.',
+        );
+      }
       navigation.goBack();
     } catch (error) {
       showError('Error al actualizar perfil', error);
@@ -114,6 +127,24 @@ export default function EditProfileScreen({ navigation }: Props) {
                 )}
                 <Text style={styles.previewName}>{name || 'Tu nombre'}</Text>
                 <Text style={styles.previewCareer}>{career || 'Tu carrera'}</Text>
+                <AccountTypeBadge accountType={accountType} />
+              </View>
+
+              <View style={{ marginTop: 24 }}>
+                <SectionLabel>Soy</SectionLabel>
+              </View>
+              <View style={styles.formCard}>
+                <AccountTypePicker
+                  value={accountType}
+                  onChange={(value) => {
+                    // Keep the career in step while it is still just the old label.
+                    const labels = Object.values(ACCOUNT_TYPE_LABEL);
+                    if (!career.trim() || labels.includes(career.trim())) {
+                      setCareer(ACCOUNT_TYPE_LABEL[value]);
+                    }
+                    setAccountType(value);
+                  }}
+                />
               </View>
 
               <View style={{ marginTop: 24 }}>

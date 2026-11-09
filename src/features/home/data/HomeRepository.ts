@@ -1,5 +1,6 @@
 import { DEFAULT_AVATAR } from '@/src/core/roble/constants';
 import { RobleService } from '@/src/core/roble/service';
+import { accountTypeFrom } from '@/src/features/auth/domain/models';
 import { CollaboratorProfile, EnrolledProject } from '../domain/models';
 
 export class HomeRepository {
@@ -46,7 +47,14 @@ export class HomeRepository {
       // Tables may not exist yet: keep the safe defaults.
     }
 
-    return { name, avatarUrl, career, skills, interests };
+    return {
+      name,
+      avatarUrl,
+      career,
+      accountType: accountTypeFrom(cached?.account_type ?? cached?.extra?.account_type),
+      skills,
+      interests,
+    };
   }
 
   async getEnrolledProjects(): Promise<EnrolledProject[]> {

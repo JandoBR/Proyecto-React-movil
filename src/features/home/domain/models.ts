@@ -1,7 +1,10 @@
+import { AccountType } from '@/src/features/auth/domain/models';
+
 export interface CollaboratorProfile {
   name: string;
   avatarUrl: string;
   career: string;
+  accountType: AccountType | null;
   skills: string[];
   interests: string[];
 }

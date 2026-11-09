@@ -27,6 +27,7 @@ export type RootStackParamList = {
   AppliedProjectDetail: { project: AppliedProject };
   EditProfile: undefined;
   Workspace: { projectId: string; projectTitle: string; isOwner: boolean };
+  ProjectChat: { projectId: string; projectTitle: string };
 };
 
 declare global {

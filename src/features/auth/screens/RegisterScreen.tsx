@@ -15,6 +15,8 @@ import { TextInput } from 'react-native-paper';
 
 import { colors } from '@/src/core/theme/colors';
 import { useAuth } from '@/src/features/auth/AuthContext';
+import { AccountTypePicker } from '@/src/features/auth/AccountTypePicker';
+import { AccountType } from '@/src/features/auth/domain/models';
 import { RootStackParamList } from '@/src/navigation/types';
 import { CircleIconButton, GradientButton } from '@/src/ui/components';
 import { useFeedback } from '@/src/ui/feedback';
@@ -23,6 +25,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
 interface FormErrors {
   name?: string;
+  accountType?: string;
   email?: string;
   password?: string;
   confirm?: string;
@@ -32,6 +35,7 @@ export default function RegisterScreen({ navigation }: Props) {
   const { register } = useAuth();
   const { showError, showSuccess } = useFeedback();
   const [name, setName] = useState('');
+  const [accountType, setAccountType] = useState<AccountType | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -42,6 +46,7 @@ export default function RegisterScreen({ navigation }: Props) {
   const submit = async () => {
     const next: FormErrors = {};
     if (!name.trim()) next.name = 'Ingresa tu nombre completo';
+    if (!accountType) next.accountType = 'Elige si eres estudiante o profesor';
     if (!email.trim()) next.email = 'Ingresa tu correo';
     else if (!email.includes('@') || !email.includes('.')) {
       next.email = 'Ingresa un correo válido';
@@ -59,11 +64,11 @@ export default function RegisterScreen({ navigation }: Props) {
     }
     if (confirm !== password) next.confirm = 'Las contraseñas no coinciden';
     setErrors(next);
-    if (Object.keys(next).length) return;
+    if (Object.keys(next).length || !accountType) return;
 
     setLoading(true);
     try {
-      await register(email, password, name);
+      await register(email, password, name, accountType);
       showSuccess('Cuenta creada', `Bienvenido a Nexus, ${name.trim()}`);
     } catch (error) {
       showError('Error al registrarse', error);
@@ -116,6 +121,23 @@ export default function RegisterScreen({ navigation }: Props) {
                 }
               />
               {errors.name ? <Text style={styles.error}>{errors.name}</Text> : null}
+            </View>
+
+            <View>
+              <Text style={styles.label}>Soy</Text>
+              <AccountTypePicker
+                value={accountType}
+                error={!!errors.accountType}
+                onChange={(value) => {
+                  setAccountType(value);
+                  if (errors.accountType) {
+                    setErrors((current) => ({ ...current, accountType: undefined }));
+                  }
+                }}
+              />
+              {errors.accountType ? (
+                <Text style={styles.error}>{errors.accountType}</Text>
+              ) : null}
             </View>
 
             <View>
@@ -247,6 +269,7 @@ const styles = StyleSheet.create({
   title: { marginTop: 20, fontSize: 28, fontWeight: '800', color: colors.text },
   subtitle: { marginTop: 6, fontSize: 14, color: colors.muted },
   input: { backgroundColor: colors.white },
+  label: { fontSize: 13, fontWeight: '600', color: colors.muted, marginBottom: 8 },
   helper: { fontSize: 12, color: colors.subtle, marginTop: 6, marginLeft: 4 },
   error: { color: colors.danger, fontSize: 12, marginTop: 4, marginLeft: 4 },
   footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 20 },

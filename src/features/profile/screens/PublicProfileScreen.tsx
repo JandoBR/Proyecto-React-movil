@@ -12,7 +12,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDI } from '@/src/core/di/DIProvider';
 import { TOKENS } from '@/src/core/di/tokens';
 import { colors, cardShadow } from '@/src/core/theme/colors';
+import { ACCOUNT_TYPE_LABEL } from '@/src/features/auth/domain/models';
 import { CollaboratorProfile } from '@/src/features/home/domain/models';
+import { AccountTypeBadge } from '@/src/features/profile/AccountTypeBadge';
 import { ProfileRepository } from '@/src/features/profile/data/ProfileRepository';
 import { RootStackParamList } from '@/src/navigation/types';
 import {
@@ -76,7 +78,11 @@ export default function PublicProfileScreen({ navigation, route }: Props) {
         <View style={styles.profileCard}>
           <Avatar uri={avatarUrl} size={92} />
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.career}>{career}</Text>
+          {profile?.accountType &&
+          career === ACCOUNT_TYPE_LABEL[profile.accountType] ? null : (
+            <Text style={styles.career}>{career}</Text>
+          )}
+          <AccountTypeBadge accountType={profile?.accountType ?? null} />
         </View>
 
         {loading ? (

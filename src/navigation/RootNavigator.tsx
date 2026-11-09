@@ -11,6 +11,7 @@ import EditProjectScreen from '@/src/features/project/screens/EditProjectScreen'
 import TeamManagementScreen from '@/src/features/project/screens/TeamManagementScreen';
 import EditProfileScreen from '@/src/features/profile/screens/EditProfileScreen';
 import PublicProfileScreen from '@/src/features/profile/screens/PublicProfileScreen';
+import ProjectChatScreen from '@/src/features/workspace/screens/ProjectChatScreen';
 import WorkspaceScreen from '@/src/features/workspace/screens/WorkspaceScreen';
 import MainTabs from './MainTabs';
 import { RootStackParamList } from './types';
@@ -40,6 +41,7 @@ export default function RootNavigator() {
           />
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           <Stack.Screen name="Workspace" component={WorkspaceScreen} />
+          <Stack.Screen name="ProjectChat" component={ProjectChatScreen} />
         </>
       ) : (
         <>

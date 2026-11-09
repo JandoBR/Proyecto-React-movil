@@ -7,4 +7,5 @@ export const TOKENS = {
   CreateRepo: Symbol("CreateRepo"),
   ProfileRepo: Symbol("ProfileRepo"),
   WorkspaceRepo: Symbol("WorkspaceRepo"),
+  ChatRepo: Symbol("ChatRepo"),
 } as const;

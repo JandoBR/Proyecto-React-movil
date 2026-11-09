@@ -18,7 +18,9 @@ import { useDI } from '@/src/core/di/DIProvider';
 import { TOKENS } from '@/src/core/di/tokens';
 import { colors, cardShadow } from '@/src/core/theme/colors';
 import { useAuth } from '@/src/features/auth/AuthContext';
+import { ACCOUNT_TYPE_LABEL } from '@/src/features/auth/domain/models';
 import { CollaboratorProfile } from '@/src/features/home/domain/models';
+import { AccountTypeBadge } from '@/src/features/profile/AccountTypeBadge';
 import { ProfileRepository } from '@/src/features/profile/data/ProfileRepository';
 import { RootStackParamList, TabParamList } from '@/src/navigation/types';
 import { Avatar, Card, OutlineButton } from '@/src/ui/components';
@@ -173,7 +175,11 @@ export default function ProfileScreen({ navigation }: Props) {
         <Card style={{ alignItems: 'center', paddingVertical: 20 }}>
           <Avatar uri={profile?.avatarUrl} size={92} />
           <Text style={styles.name}>{profile?.name ?? 'Colaborador'}</Text>
-          <Text style={styles.career}>{profile?.career ?? 'Estudiante'}</Text>
+          {profile?.accountType &&
+          profile.career === ACCOUNT_TYPE_LABEL[profile.accountType] ? null : (
+            <Text style={styles.career}>{profile?.career ?? 'Estudiante'}</Text>
+          )}
+          <AccountTypeBadge accountType={profile?.accountType ?? null} />
           <View style={{ marginTop: 16, alignSelf: 'stretch' }}>
             <OutlineButton
               label="Editar Perfil"

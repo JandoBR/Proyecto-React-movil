@@ -1,5 +1,10 @@
 import { RobleService } from '@/src/core/roble/service';
-import { UserSession, userSessionFrom } from '../domain/models';
+import {
+  ACCOUNT_TYPE_LABEL,
+  AccountType,
+  UserSession,
+  userSessionFrom,
+} from '../domain/models';
 
 export class AuthRepository {
   constructor(private readonly roble: RobleService) {}
@@ -17,8 +22,18 @@ export class AuthRepository {
     return userSessionFrom(await this.roble.login(email, password));
   }
 
-  async register(email: string, password: string, name: string): Promise<UserSession> {
-    return userSessionFrom(await this.roble.register(email, password, name));
+  async register(
+    email: string,
+    password: string,
+    name: string,
+    accountType: AccountType,
+  ): Promise<UserSession> {
+    return userSessionFrom(
+      await this.roble.register(email, password, name, {
+        accountType,
+        career: ACCOUNT_TYPE_LABEL[accountType],
+      }),
+    );
   }
 
   async logout(): Promise<void> {

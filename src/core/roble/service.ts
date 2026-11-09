@@ -27,28 +27,44 @@ export class RobleService {
     return user;
   }
 
-  async register(email: string, password: string, name: string): Promise<RobleRecord> {
+  /**
+   * `accountType` es `student` o `teacher`; `career` es su etiqueta, que queda
+   * como carrera inicial del perfil hasta que la persona la edite.
+   */
+  async register(
+    email: string,
+    password: string,
+    name: string,
+    { accountType, career }: { accountType: string; career: string },
+  ): Promise<RobleRecord> {
     await this.client.register(email.trim(), password, name.trim(), {
-      career: 'Estudiante',
+      career,
+      account_type: accountType,
       avatar_url:
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
     });
     const user = await this.client.login(email.trim(), password);
-    this.cachedUser = user;
+    this.cachedUser = { ...user, account_type: accountType, career };
 
+    const profile = {
+      id: this.currentUserId,
+      name: name.trim(),
+      career,
+      avatar_url:
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+    };
     try {
-      await this.client.create('collaborator', {
-        id: this.currentUserId,
-        name: name.trim(),
-        career: 'Estudiante',
-        avatar_url:
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-      });
+      await this.client.create('collaborator', { ...profile, account_type: accountType });
     } catch {
-      // The profile may already exist or the table may not accept the row yet.
+      // The table may not have the account_type column yet.
+      try {
+        await this.client.create('collaborator', profile);
+      } catch {
+        // The profile may already exist or the table may not accept the row yet.
+      }
     }
 
-    return user;
+    return this.cachedUser;
   }
 
   async logout(): Promise<void> {

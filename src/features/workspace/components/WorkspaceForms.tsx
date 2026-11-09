@@ -85,13 +85,13 @@ export function TaskFormModal({
   onSubmit: (input: {
     title: string;
     description: string;
-    assignee: WorkspaceMember | null;
+    assignees: WorkspaceMember[];
     dueDate: Date | null;
   }) => Promise<boolean>;
 }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [assignee, setAssignee] = useState<WorkspaceMember | null>(null);
+  const [assignees, setAssignees] = useState<WorkspaceMember[]>([]);
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [saving, setSaving] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -101,7 +101,7 @@ export function TaskFormModal({
     if (!visible) return;
     setTitle('');
     setDescription('');
-    setAssignee(null);
+    setAssignees([]);
     setDueDate(null);
     setSaving(false);
     setShowError(false);
@@ -115,7 +115,7 @@ export function TaskFormModal({
     }
     setSaving(true);
     setSaveError(false);
-    const ok = await onSubmit({ title, description, assignee, dueDate });
+    const ok = await onSubmit({ title, description, assignees, dueDate });
     setSaving(false);
     if (ok) onClose();
     else setSaveError(true);
@@ -152,24 +152,37 @@ export function TaskFormModal({
           style={styles.input}
         />
 
-        <Text style={styles.label}>Responsable</Text>
+        <Text style={styles.label}>Responsables</Text>
+        <Text style={styles.hint}>Puedes elegir a más de una persona.</Text>
         <View style={styles.wrap}>
           <Pressable
-            onPress={() => setAssignee(null)}
-            style={[styles.chip, !assignee && styles.chipActive]}
+            onPress={() => setAssignees([])}
+            style={[styles.chip, !assignees.length && styles.chipActive]}
           >
-            <Text style={[styles.chipText, !assignee && styles.chipTextActive]}>
+            <Text style={[styles.chipText, !assignees.length && styles.chipTextActive]}>
               Sin asignar
             </Text>
           </Pressable>
           {members.map((member) => {
-            const selected = assignee?.id === member.id;
+            const selected = assignees.some((item) => item.id === member.id);
             return (
               <Pressable
                 key={member.id}
-                onPress={() => setAssignee(member)}
-                style={[styles.chip, selected && styles.chipActive]}
+                testID={`assignee-${member.id}`}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selected }}
+                onPress={() =>
+                  setAssignees((current) =>
+                    selected
+                      ? current.filter((item) => item.id !== member.id)
+                      : [...current, member],
+                  )
+                }
+                style={[styles.chip, styles.chipRow, selected && styles.chipActive]}
               >
+                {selected ? (
+                  <MaterialCommunityIcons name="check" size={14} color={colors.primary} />
+                ) : null}
                 <Text style={[styles.chipText, selected && styles.chipTextActive]}>
                   {member.role ? `${member.name} · ${member.role}` : member.name}
                 </Text>
@@ -346,6 +359,7 @@ const styles = StyleSheet.create({
   title: { flex: 1, fontSize: 19, fontWeight: '800', color: colors.textSoft },
   input: { backgroundColor: colors.inputFill },
   label: { fontSize: 13, fontWeight: '600', color: colors.muted },
+  hint: { fontSize: 12, color: colors.subtle, marginTop: -10 },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
     paddingHorizontal: 14,
@@ -355,6 +369,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.cream,
   },
+  chipRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   chipActive: {
     backgroundColor: 'rgba(255,112,67,0.12)',
     borderColor: colors.primary,
