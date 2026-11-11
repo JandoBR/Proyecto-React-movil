@@ -53,6 +53,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     fontWeight: '500',
-    color: '#8D8D8D',
+    color: colors.subtle,
   },
 });

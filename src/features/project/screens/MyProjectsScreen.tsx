@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   emptyText: {
     paddingTop: 60,
     textAlign: 'center',
-    color: '#6B6B6B',
+    color: colors.muted,
   },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   createdTitle: {
@@ -425,14 +425,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 13.5,
     lineHeight: 19,
-    color: '#6B6B6B',
+    color: colors.muted,
   },
   startButton: {
     height: 46,
     borderRadius: 30,
     borderWidth: 1.2,
-    borderColor: '#FFCCBC',
-    backgroundColor: '#FFF4EF',
+    borderColor: colors.primaryBorder,
+    backgroundColor: colors.primarySoft,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   cardDivider: {
     marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#ECECEC',
+    borderTopColor: colors.divider,
     paddingTop: 12,
   },
   cardFooter: {
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 13.5,
     lineHeight: 19,
-    color: '#6B6B6B',
+    color: colors.muted,
   },
   appliedDate: { fontSize: 12.5, color: colors.subtle },
   withdrawButton: {

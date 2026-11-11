@@ -326,8 +326,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FFCCBC',
-    backgroundColor: 'rgba(255,112,67,0.08)',
+    borderColor: colors.primaryBorder,
+    backgroundColor: colors.primarySoft,
   },
   chipText: { fontSize: 13, fontWeight: '600', color: colors.primary },
   logoutButton: {

@@ -185,7 +185,7 @@ export function TagChip({
 }) {
   return (
     <View style={[styles.tag, accent ? styles.tagAccent : styles.tagNeutral]}>
-      <Text style={[styles.tagText, accent && { color: '#C0615E' }]}>{label}</Text>
+      <Text style={[styles.tagText, accent && { color: colors.primaryDark }]}>{label}</Text>
     </View>
   );
 }
@@ -210,7 +210,7 @@ export function StatusBadge({
       : {
           recruiting: { fg: colors.amber, bg: colors.amberBg },
           active: { fg: colors.green, bg: colors.greenBg },
-          completed: { fg: colors.muted, bg: '#ECECEC' },
+          completed: { fg: colors.muted, bg: colors.chipBg },
         }[status];
   const label =
     kind === 'application'
@@ -229,11 +229,11 @@ export function MatchBadge({ percentage }: { percentage: number }) {
     <View
       style={[
         styles.badge,
-        { backgroundColor: high ? colors.greenBg : '#FDEBDD' },
+        { backgroundColor: high ? colors.greenBg : colors.amberBg },
       ]}
     >
       <Text
-        style={[styles.badgeText, { color: high ? colors.green : '#E8833A' }]}
+        style={[styles.badgeText, { color: high ? colors.green : colors.amber }]}
       >
         {percentage}% Match
       </Text>
@@ -428,8 +428,8 @@ export const styles = StyleSheet.create({
     paddingVertical: 7,
     borderWidth: 1.2,
   },
-  tagNeutral: { backgroundColor: colors.white, borderColor: '#E3E3E3' },
-  tagAccent: { backgroundColor: 'rgba(255,255,255,0.5)', borderColor: '#E8B5B2' },
+  tagNeutral: { backgroundColor: colors.white, borderColor: colors.border },
+  tagAccent: { backgroundColor: colors.primarySoft, borderColor: colors.primaryBorder },
   tagText: { fontSize: 13, fontWeight: '500', color: colors.textSoft },
   badge: {
     borderRadius: 20,
@@ -468,7 +468,7 @@ export const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: 'rgba(255,112,67,0.1)',
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,

@@ -126,7 +126,7 @@ export default function AppliedProjectDetailScreen({ navigation, route }: Props)
           />
           <TimelineStep
             title={resolved ? APPLICATION_STATUS_LABEL[project.status] : 'Respuesta del equipo'}
-            color={resolved ? style.fg : '#BDBDBD'}
+            color={resolved ? style.fg : colors.disabled}
             done={resolved}
             current={resolved}
             last
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   statusDivider: {
     marginVertical: 18,
     borderTopWidth: 1,
-    borderTopColor: '#F0EBE6',
+    borderTopColor: colors.divider,
   },
   timelineRow: { flexDirection: 'row' },
   timelineDot: {

@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#6B6B6B',
+    color: colors.muted,
     textAlign: 'center',
   },
 });

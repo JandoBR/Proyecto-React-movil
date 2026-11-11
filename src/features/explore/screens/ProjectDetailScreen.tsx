@@ -122,7 +122,7 @@ export default function ProjectDetailScreen({ navigation, route }: Props) {
     return (
       <View style={[styles.center, { paddingTop: insets.top }]}>
         <CircleIconButton icon="arrow-left" onPress={() => navigation.goBack()} />
-        <Text style={{ color: '#6B6B6B', marginTop: 16 }}>
+        <Text style={{ color: colors.muted, marginTop: 16 }}>
           No se pudo cargar el proyecto.
         </Text>
       </View>
@@ -220,7 +220,7 @@ export default function ProjectDetailScreen({ navigation, route }: Props) {
                 <MaterialCommunityIcons
                   name={selected ? 'radiobox-marked' : 'radiobox-blank'}
                   size={20}
-                  color={selected ? colors.primary : '#BFBFBF'}
+                  color={selected ? colors.primary : colors.disabled}
                 />
                 <Text
                   style={[
@@ -344,11 +344,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   roleRowSelected: {
-    backgroundColor: 'rgba(255,112,67,0.08)',
+    backgroundColor: colors.primarySoft,
     borderColor: colors.primary,
     borderWidth: 1.6,
   },
-  roleRowIdle: { backgroundColor: colors.white, borderColor: '#ECECEC' },
+  roleRowIdle: { backgroundColor: colors.white, borderColor: colors.border },
   roleName: { flex: 1, fontSize: 14, fontWeight: '600', color: colors.textSoft },
   skillText: { fontSize: 12, fontWeight: '600', color: colors.green },
   membersRow: {
@@ -361,17 +361,17 @@ const styles = StyleSheet.create({
   memberText: {
     marginTop: 6,
     fontSize: 12,
-    color: '#6B6B6B',
+    color: colors.muted,
     textAlign: 'center',
   },
   ownerBadge: {
     height: 54,
     borderRadius: 30,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.chipBg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
   },
-  ownerText: { fontSize: 14, fontWeight: '700', color: '#6B6B6B' },
+  ownerText: { fontSize: 14, fontWeight: '700', color: colors.muted },
 });

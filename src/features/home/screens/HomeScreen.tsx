@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.textSoft,
   },
-  subtitle: { marginTop: 6, fontSize: 15, color: '#6B6B6B' },
+  subtitle: { marginTop: 6, fontSize: 15, color: colors.muted },
   actions: { flexDirection: 'row', gap: 14, marginTop: 20 },
   actionCard: {
     borderRadius: 22,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12.5,
     lineHeight: 17,
-    color: '#6B6B6B',
+    color: colors.muted,
   },
   actionSubtitleLight: {
     marginTop: 4,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 13.5,
     lineHeight: 19,
-    color: '#6B6B6B',
+    color: colors.muted,
   },
   memberFooter: {
     marginTop: 14,
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
   },
-  rolePillText: { fontSize: 11.5, fontWeight: '600', color: '#6B6B6B' },
+  rolePillText: { fontSize: 11.5, fontWeight: '600', color: colors.muted },
   leaveButton: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   leaveText: { fontSize: 12.5, fontWeight: '700', color: colors.red },
   workspaceButton: {

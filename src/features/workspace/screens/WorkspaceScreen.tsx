@@ -45,7 +45,7 @@ import {
 } from '@/src/ui/components';
 import { useDialog } from '@/src/ui/dialogs';
 import { useFeedback } from '@/src/ui/feedback';
-import { MonthCalendar, DayMarkers } from '../components/MonthCalendar';
+import { DayMarkers, MonthCalendar } from '@/src/ui/month-calendar';
 import { EventFormModal, TaskFormModal } from '../components/WorkspaceForms';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Workspace'>;
@@ -698,7 +698,7 @@ function TaskTile({
       ? colors.red
       : daysLeft <= 2
         ? colors.amber
-        : '#6B6B6B';
+        : colors.muted;
   const dueBackground = task.isDone
     ? colors.greenBg
     : daysLeft < 0
@@ -714,7 +714,14 @@ function TaskTile({
         overdue && { borderWidth: 1.2, borderColor: '#F3C4C4' },
       ]}
     >
-      <Pressable onPress={onToggle} style={styles.checkCircleWrap}>
+      <Pressable
+        onPress={onToggle}
+        style={styles.checkCircleWrap}
+        hitSlop={8}
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: task.isDone }}
+        accessibilityLabel={task.isDone ? 'Marcar como pendiente' : 'Marcar como completada'}
+      >
         {task.isDone ? (
           <LinearGradient
             colors={[...gradient]}
@@ -765,7 +772,7 @@ function TaskTile({
                 key={`${task.assigneeIds[index] ?? ''}-${index}`}
                 icon="account-outline"
                 label={assigneeName}
-                foreground="#6B6B6B"
+                foreground={colors.muted}
                 background={colors.chipBg}
               />
             ))}
@@ -778,7 +785,7 @@ function TaskTile({
           <MaterialCommunityIcons
             name="trash-can-outline"
             size={20}
-            color="#BDBDBD"
+            color={colors.disabled}
           />
         </Pressable>
       ) : null}
@@ -789,7 +796,7 @@ function TaskTile({
 function MetaChip({
   icon,
   label,
-  foreground = '#6B6B6B',
+  foreground = colors.muted,
   background = colors.chipBg,
 }: {
   icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -839,7 +846,7 @@ function CalendarEntryTile({
   const event = entry.event;
   const isTask = !!task;
   const done = task?.isDone ?? false;
-  const accent = isTask ? (done ? colors.green : '#5C5C5C') : colors.primary;
+  const accent = isTask ? (done ? colors.green : colors.body) : colors.primary;
   const subtitle = isTask
     ? done
       ? 'Tarea completada'
@@ -892,7 +899,7 @@ function CalendarEntryTile({
           <MaterialCommunityIcons
             name="delete-outline"
             size={20}
-            color="#BDBDBD"
+            color={colors.disabled}
           />
         </Pressable>
       ) : null}
@@ -1054,7 +1061,7 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
     borderWidth: 2,
-    borderColor: '#D6CCC2',
+    borderColor: colors.body,
   },
   taskTitle: { fontSize: 15, fontWeight: '700', color: colors.textSoft },
   taskDescription: {
@@ -1079,7 +1086,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,112,67,0.12)',
+    backgroundColor: colors.primarySoft,
   },
   chatTitle: { fontSize: 15, fontWeight: '700', color: colors.textSoft },
   chatSubtitle: { marginTop: 2, fontSize: 12.5, color: colors.muted },

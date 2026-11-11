@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: 'rgba(255,112,67,0.12)',
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   },
   chipRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   chipActive: {
-    backgroundColor: 'rgba(255,112,67,0.12)',
+    backgroundColor: colors.primarySoft,
     borderColor: colors.primary,
   },
   chipText: { fontSize: 13, color: colors.body },

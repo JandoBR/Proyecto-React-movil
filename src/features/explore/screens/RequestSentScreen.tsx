@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 14,
     lineHeight: 21,
-    color: '#6B6B6B',
+    color: colors.muted,
     textAlign: 'center',
   },
   summaryRow: { flexDirection: 'row', alignItems: 'center' },

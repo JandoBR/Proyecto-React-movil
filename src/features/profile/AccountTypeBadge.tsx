@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,112,67,0.12)',
+    backgroundColor: colors.primarySoft,
   },
   text: { fontSize: 12.5, fontWeight: '700', color: colors.primary },
 });

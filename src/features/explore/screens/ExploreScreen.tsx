@@ -430,10 +430,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gradientEnd,
     borderColor: colors.gradientEnd,
   },
-  chipIdle: { backgroundColor: colors.white, borderColor: '#E3E3E3' },
+  chipIdle: { backgroundColor: colors.white, borderColor: colors.border },
   chipText: { fontSize: 13.5, fontWeight: '500', color: colors.textSoft },
   state: { paddingTop: 60, alignItems: 'center' },
-  stateText: { color: '#6B6B6B', textAlign: 'center' },
+  stateText: { color: colors.muted, textAlign: 'center' },
   footerText: {
     paddingVertical: 20,
     textAlign: 'center',
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 13.5,
     lineHeight: 19,
-    color: '#6B6B6B',
+    color: colors.muted,
   },
   rolesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, marginTop: 16 },
   rolePreview: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   cardDivider: {
     marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#ECECEC',
+    borderTopColor: colors.divider,
     paddingTop: 12,
   },
   cardFooter: {

@@ -13,6 +13,8 @@ export interface DayMarkers {
   hasDeadline: boolean;
 }
 
+const NO_MARKERS: DayMarkers = { hasEvent: false, hasDeadline: false };
+
 export function MonthCalendar({
   month,
   selectedDay,
@@ -22,8 +24,9 @@ export function MonthCalendar({
   onNextMonth,
 }: {
   month: Date;
-  selectedDay: Date;
-  markersFor: (day: Date) => DayMarkers;
+  selectedDay: Date | null;
+  /** Puntos bajo cada día y su leyenda; sin esto, es un selector de fecha simple. */
+  markersFor?: (day: Date) => DayMarkers;
   onDaySelected: (day: Date) => void;
   onPreviousMonth: () => void;
   onNextMonth: () => void;
@@ -64,9 +67,9 @@ export function MonthCalendar({
               return <View key={column} style={styles.dayCell} />;
             }
             const day = new Date(year, monthIndex, dayNumber);
-            const selected = isSameDay(day, selectedDay);
+            const selected = !!selectedDay && isSameDay(day, selectedDay);
             const isToday = isSameDay(day, today);
-            const markers = markersFor(day);
+            const markers = markersFor?.(day) ?? NO_MARKERS;
             return (
               <Pressable
                 key={column}
@@ -114,10 +117,12 @@ export function MonthCalendar({
         </View>
       ))}
 
-      <View style={styles.legend}>
-        <Legend color={colors.primary} label="Fecha importante" />
-        <Legend color="#5C5C5C" label="Deadline de tarea" />
-      </View>
+      {markersFor ? (
+        <View style={styles.legend}>
+          <Legend color={colors.primary} label="Fecha importante" />
+          <Legend color={colors.body} label="Deadline de tarea" />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -157,7 +162,7 @@ const styles = StyleSheet.create({
   },
   weekRow: { flexDirection: 'row', marginTop: 6 },
   weekCell: { flex: 1, alignItems: 'center' },
-  weekText: { fontSize: 12, fontWeight: '700', color: '#BDBDBD' },
+  weekText: { fontSize: 12, fontWeight: '700', color: colors.disabled },
   dayCell: { flex: 1, height: 46, alignItems: 'center', justifyContent: 'center' },
   dayCircle: {
     width: 32,
@@ -169,7 +174,7 @@ const styles = StyleSheet.create({
   dayText: { fontSize: 13.5, fontWeight: '500', color: colors.textSoft },
   markers: { flexDirection: 'row', height: 5, alignItems: 'center', marginTop: 3 },
   dotEvent: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.primary },
-  dotDeadline: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#5C5C5C' },
+  dotDeadline: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.body },
   legend: {
     flexDirection: 'row',
     justifyContent: 'center',

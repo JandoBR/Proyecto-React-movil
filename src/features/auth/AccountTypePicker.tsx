@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   optionActive: {
     borderColor: colors.primary,
-    backgroundColor: 'rgba(255,112,67,0.12)',
+    backgroundColor: colors.primarySoft,
   },
   optionError: { borderColor: colors.danger },
   text: { fontSize: 15, color: colors.body },

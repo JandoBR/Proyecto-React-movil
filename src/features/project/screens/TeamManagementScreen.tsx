@@ -130,7 +130,7 @@ export default function TeamManagementScreen({ navigation, route }: Props) {
     return (
       <View style={[styles.center, { paddingTop: insets.top }]}>
         <CircleIconButton icon="arrow-left" onPress={() => navigation.goBack()} />
-        <Text style={{ color: '#6B6B6B' }}>No se pudo cargar el proyecto.</Text>
+        <Text style={{ color: colors.muted }}>No se pudo cargar el proyecto.</Text>
       </View>
     );
   }
@@ -488,8 +488,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#FFCCBC',
-    backgroundColor: 'rgba(255,112,67,0.08)',
+    borderColor: colors.primaryBorder,
+    backgroundColor: colors.primarySoft,
   },
   rolePillText: {
     fontSize: 11.5,
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F0EBE6',
+    borderTopColor: colors.divider,
     paddingTop: 10,
   },
   removeText: { fontSize: 13, fontWeight: '600', color: colors.red },
