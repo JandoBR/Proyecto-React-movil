@@ -8,7 +8,7 @@ Esta es la versión React Native / Expo del proyecto Flutter
 [Proyecto1-Movil](https://github.com/FranzeskoRCH/Proyecto1-Movil). Conserva las
 pantallas, los flujos y el modelo de datos del original.
 
-[Video](link video)
+[Video](https://youtu.be/GbwlVtfXdL0)
 
 **Equipo:** Jose Ballestas (@JandoBR), Daniel Gomez (@mariskit), Nicolas Muvdi
 (@Muvdi1805), Francesco Rosa (@FranzeskoRCH) · Grupo 6.
